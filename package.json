@@ -1,0 +1,25 @@
+{
+    "name": "backspace",
+    "version": "0.0.1",
+    "publisher": "jrieken",
+    "engines": {
+        "vscode": ">=0.9.0-pre.1"
+    },
+    "main": "./out/extension",
+    "contributes": {
+        "keybindings": [
+            {
+                "command": "backspace++",
+                "key": "backspace",
+                "when": "editorTextFocus"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+    },
+    "devDependencies": {
+        "vscode": ">=0.9.0-pre.1"
+    }
+}
