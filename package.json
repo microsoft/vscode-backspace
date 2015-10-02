@@ -1,8 +1,12 @@
 {
     "name": "backspace",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "jrieken",
     "description": "⌫ - erase spaces to the left by multiples of the tab size.",
+    "repository": {
+        "url": "https://github.com/Microsoft/vscode-backspace.git",
+        "type": "git"
+    },
     "engines": {
         "vscode": ">=0.9.0-pre.1"
     },
