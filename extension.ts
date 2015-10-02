@@ -23,7 +23,9 @@ export function activate() {
             } else if (selection.start.character === 1) {
                 // remove line, unless first
                 if (selection.start.line > 1) {
-                    deleteRange = new vscode.Range(new vscode.Position(selection.start.line - 1, Number.MAX_VALUE), selection.start);
+                    deleteRange = new vscode.Range(new vscode.Position(
+                        selection.start.line - 1, document.getLineMaxColumn(selection.start.line - 1)),
+                        selection.start);
                 }
             } else {
                 let value = document.getTextOnLine(selection.start.line);
