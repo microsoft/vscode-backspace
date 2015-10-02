@@ -1,6 +1,6 @@
 {
     "name": "backspace",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "jrieken",
     "description": "⌫ - erase spaces to the left by multiples of the tab size.",
     "engines": {
