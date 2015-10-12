@@ -1,6 +1,6 @@
 {
     "name": "backspace",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "jrieken",
     "description": "⌫ - erase spaces to the left by multiples of the tab size.",
     "repository": {
@@ -11,6 +11,9 @@
         "vscode": ">=0.9.0-pre.1"
     },
     "main": "./out/extension",
+    "activationEvents": [
+        "command:backspace++"
+    ],
     "contributes": {
         "keybindings": [
             {
