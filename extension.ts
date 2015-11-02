@@ -4,37 +4,35 @@ export function activate() {
 
     vscode.commands.registerCommand('backspace++', () => {
 
-        let editor = vscode.window.getActiveTextEditor();
+        let editor = vscode.window.activeTextEditor;
         if (!editor) {
             return;
         }
 
-        let document = editor.getTextDocument();
-        let tabSize = editor.getOptions().tabSize;
-
+        let document = editor.document;
+        let tabSize = editor.options.tabSize;
         let ranges: vscode.Range[] = [];
 
-        for (let selection of editor.getSelections()) {
+        for (let selection of editor.selections) {
             let deleteRange: vscode.Range;
-            if (!selection.isEmpty()) {
+            if (!selection.isEmpty) {
                 // remove selected things
                 deleteRange = selection;
 
-            } else if (selection.start.character === 1) {
+            } else if (selection.start.character === 0) {
                 // remove line, unless first
-                if (selection.start.line > 1) {
-                    deleteRange = new vscode.Range(new vscode.Position(
-                        selection.start.line - 1, document.getLineMaxColumn(selection.start.line - 1)),
+                if (selection.start.line > 0) {
+                    
+                    deleteRange = new vscode.Range(
+                        document.lineAt(selection.start.line - 1).range.end,
                         selection.start);
                 }
             } else {
-                let value = document.getTextOnLine(selection.start.line);
-                let len = selection.start.character - 1;
-                let match = /^\t*((?: )*)$/.exec(value.substr(0, len));
-                if (match) {
+                let line = document.lineAt(selection.start);
+                if (line.firstNonWhitespaceCharacterIndex >= selection.start.character) {
+                    let match = /^\t*((?: )*)$/.exec(line.text.substr(0, selection.start.character));
                     let toRemove = (match[1].length % tabSize) || tabSize;
                     deleteRange = new vscode.Range(selection.start.line, selection.start.character - toRemove, selection.start.line, selection.start.character);
-
                 } else {
                     deleteRange = new vscode.Range(selection.start.line, selection.start.character - 1, selection.start.line, selection.start.character);
                 }
@@ -65,6 +63,6 @@ export function activate() {
         });
 
         // set selection
-        editor.setSelections(newSelections);
+        editor.selections = newSelections;
     });
 }
