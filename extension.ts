@@ -1,68 +1,71 @@
-import * as vscode from 'vscode';
 
-export function activate() {
+import {ExtensionContext, Selection, Range, commands, window} from 'vscode';
 
-    vscode.commands.registerCommand('backspace++', () => {
+export function activate(context:ExtensionContext) {
 
-        let editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
+    context.subscriptions.push(commands.registerCommand('backspace++', backspace));
+}
 
-        let document = editor.document;
-        let tabSize = editor.options.tabSize;
-        let ranges: vscode.Range[] = [];
+function backspace() {
 
-        for (let selection of editor.selections) {
-            let deleteRange: vscode.Range;
-            if (!selection.isEmpty) {
-                // remove selected things
-                deleteRange = selection;
+    let editor = window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
 
-            } else if (selection.start.character === 0) {
-                // remove line, unless first
-                if (selection.start.line > 0) {
-                    
-                    deleteRange = new vscode.Range(
-                        document.lineAt(selection.start.line - 1).range.end,
-                        selection.start);
-                }
+    let document = editor.document;
+    let tabSize = editor.options.tabSize;
+    let ranges: Range[] = [];
+
+    for (let selection of editor.selections) {
+        let deleteRange: Range;
+        if (!selection.isEmpty) {
+            // remove selected things
+            deleteRange = selection;
+
+        } else if (selection.start.character === 0) {
+            // remove line, unless first
+            if (selection.start.line > 0) {
+
+                deleteRange = new Range(
+                    document.lineAt(selection.start.line - 1).range.end,
+                    selection.start);
+            }
+        } else {
+            let line = document.lineAt(selection.start);
+            if (line.firstNonWhitespaceCharacterIndex >= selection.start.character) {
+                let match = /^\t*((?: )*)$/.exec(line.text.substr(0, selection.start.character));
+                let toRemove = (match[1].length % tabSize) || tabSize;
+                deleteRange = new Range(selection.start.line, selection.start.character - toRemove, selection.start.line, selection.start.character);
             } else {
-                let line = document.lineAt(selection.start);
-                if (line.firstNonWhitespaceCharacterIndex >= selection.start.character) {
-                    let match = /^\t*((?: )*)$/.exec(line.text.substr(0, selection.start.character));
-                    let toRemove = (match[1].length % tabSize) || tabSize;
-                    deleteRange = new vscode.Range(selection.start.line, selection.start.character - toRemove, selection.start.line, selection.start.character);
-                } else {
-                    deleteRange = new vscode.Range(selection.start.line, selection.start.character - 1, selection.start.line, selection.start.character);
-                }
-            }
-
-            if (deleteRange) {
-                let skip = false;
-                for (let range of ranges) {
-                    if (range.contains(deleteRange.start) || range.contains(deleteRange.end)) {
-                        skip = true;
-                        break;
-                    }
-                }
-
-                if (!skip) {
-                    ranges.push(deleteRange);
-                }
+                deleteRange = new Range(selection.start.line, selection.start.character - 1, selection.start.line, selection.start.character);
             }
         }
 
-        // make edits
-        let newSelections: vscode.Selection[] = [];
-        editor.edit(edit => {
+        if (deleteRange) {
+            let skip = false;
             for (let range of ranges) {
-                newSelections.push(new vscode.Selection(range.start, range.start));
-                edit.delete(range);
+                if (range.contains(deleteRange.start) || range.contains(deleteRange.end)) {
+                    skip = true;
+                    break;
+                }
             }
-        });
 
-        // set selection
-        editor.selections = newSelections;
+            if (!skip) {
+                ranges.push(deleteRange);
+            }
+        }
+    }
+
+    // make edits
+    let newSelections: Selection[] = [];
+    editor.edit(edit => {
+        for (let range of ranges) {
+            newSelections.push(new Selection(range.start, range.start));
+            edit.delete(range);
+        }
     });
+
+    // set selection
+    editor.selections = newSelections;
 }
