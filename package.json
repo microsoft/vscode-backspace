@@ -1,23 +1,23 @@
 {
-    "name": "backspace",
-    "version": "0.0.4",
+    "name": "backspace-plusplus",
+    "version": "0.0.5",
     "publisher": "jrieken",
-    "description": "⌫ - erase spaces to the left by multiples of the tab size.",
+    "description": "Erase spaces by multiples of the tab size 🔙",
     "repository": {
         "url": "https://github.com/Microsoft/vscode-backspace.git",
         "type": "git"
     },
     "engines": {
-        "vscode": "*"
+        "vscode": "0.10.x"
     },
     "main": "./out/extension",
     "activationEvents": [
-        "onCommand:backspace++"
+        "onCommand:jrieken.backspaceLeft"
     ],
     "contributes": {
         "keybindings": [
             {
-                "command": "backspace++",
+                "command": "jrieken.backspaceLeft",
                 "key": "backspace",
                 "when": "editorTextFocus"
             }
@@ -28,6 +28,6 @@
         "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
     },
     "devDependencies": {
-        "vscode": "next"
+        "vscode": "0.10.x"
     }
 }
