@@ -3,7 +3,7 @@
     "version": "0.0.7",
     "publisher": "jrieken",
     "description": "Erase spaces by multiples of the tab size.",
-    "icon": "./resources/icon.png",
+    "icon": "resources/icon.png",
     "categories": ["Other"],
     "repository": {
         "url": "https://github.com/Microsoft/vscode-backspace.git",
