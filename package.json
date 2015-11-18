@@ -1,9 +1,9 @@
 {
     "name": "backspace-plusplus",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "publisher": "jrieken",
     "description": "Erase spaces by multiples of the tab size.",
-    "icon": "resources/icon.png",
+    "icon": "resources/icon.svg",
     "categories": ["Other"],
     "repository": {
         "url": "https://github.com/Microsoft/vscode-backspace.git",
