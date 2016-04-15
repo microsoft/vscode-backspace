@@ -6,72 +6,45 @@ export function activate(context:ExtensionContext) {
     context.subscriptions.push(commands.registerCommand('jrieken.backspaceLeft', backspace));
 }
 
+
 function backspace() {
 
-    let editor = window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         return;
     }
 
-    let {document, options} = editor;
-    let ranges: Range[] = [];
+    const {document, selections, options} = editor;
+    let hasNewSelections = false;
 
-    for (let selection of editor.selections) {
-        
-        let deleteRange = backspaceOne(selection, document, options.tabSize);
-        
-        if (deleteRange) {
-            let skip = false;
-            for (let range of ranges) {
-                if (range.contains(deleteRange.start) || range.contains(deleteRange.end)) {
-                    skip = true;
-                    break;
-                }
-            }
-            if (!skip) {
-                ranges.push(deleteRange);
-            }
+    const newSelections = selections.map(selection => {
+        if (!selection.isEmpty) {
+            return selection;
         }
-    }
 
-    editor.edit(edit => {
-        for (let range of ranges) {
-            edit.delete(range);
+        const {start} = selection; // since it's empty start is the same as 'active'
+        if (start.character === 0) {
+            return selection;
+        }
+
+        const line = document.lineAt(start);
+        if (line.firstNonWhitespaceCharacterIndex < start.character) {
+            return selection;
+        }
+
+        // check for n-space characters preceeding the caret
+        let match = /^\t*((?: )+)$/.exec(line.text.substr(0, start.character));
+        if (match) {
+            hasNewSelections = true;
+            let toRemove = (match[1].length % options.tabSize) || options.tabSize;
+            return new Selection(start.with(void 0, start.character - toRemove), start);
         }
     });
-}
 
-export function backspaceOne(selection: Selection, document: TextDocument, tabSize: number): Range {
-    
-    let {isEmpty, start} = selection;
-
-    if (!isEmpty) {
-        // remove selected things
-        return selection;
-    }
-    
-    if (start.character === 0) {
-        let prevLine = start.line - 1;
-        if (prevLine < 0) {
-            // already at first line
-            return;
-        }
-        // delete line separator
-        let end = document.lineAt(prevLine).range.end;
-        return new Range(start, end);
-    }
-    
-    let line = document.lineAt(start);
-    let toRemove = 1;
-    
-    // check for n-space characters
-    if (line.firstNonWhitespaceCharacterIndex >= start.character) {
-        let match = /^\t*((?: )+)$/.exec(line.text.substr(0, selection.start.character));
-        if (match) {
-            // we have matched n-spaces and what go back to a happy
-            toRemove = (match[1].length % tabSize) || tabSize;
-        }
+    // set the new (expanded) selections and run 'deleteLeft'
+    if (hasNewSelections) {
+        editor.selections = newSelections;
     }
 
-    return new Range(new Position(start.line, start.character - toRemove), start);
+    return commands.executeCommand('deleteLeft');
 }
