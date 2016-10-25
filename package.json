@@ -5,7 +5,6 @@
     "description": "Erase spaces by multiples of the tab size.",
     "icon": "resources/backspace.svg",
     "categories": [
-        "Productivity",
         "Other"
     ],
     "repository": {
