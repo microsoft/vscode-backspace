@@ -1,9 +1,10 @@
 {
     "name": "backspace-plusplus",
-    "version": "0.0.15",
+    "displayName": "Backspace++",
+    "version": "0.0.16",
     "publisher": "jrieken",
     "description": "Erase spaces by multiples of the tab size.",
-    "icon": "resources/backspace.svg",
+    "icon": "resources/backspace.png",
     "categories": [
         "Other"
     ],
