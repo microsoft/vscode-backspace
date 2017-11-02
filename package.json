@@ -6,7 +6,8 @@
     "description": "Erase spaces by multiples of the tab size.",
     "icon": "resources/backspace.png",
     "categories": [
-        "Other"
+        "Other",
+        "Formatters"
     ],
     "repository": {
         "url": "https://github.com/Microsoft/vscode-backspace.git",
