@@ -1,3 +1,7 @@
+# Deprecation Notice
+
+Sad but true - this extension is not required anymore because VS Code alone supports smart backspace'ing. 
+
 # Backspace++
 
 Erase spaces by multiples of the tab size. When indenting with spaces you often have to hit
